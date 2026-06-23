@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Desktop Icon Toggle — Keep Your Desktop Private & Secure</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d0f12;
+    --bg2: #141720;
+    --bg3: #1c2030;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.14);
+    --text: #f0f2f5;
+    --muted: #8b92a6;
+    --accent: #4f8ef7;
+    --accent2: #2d6fe8;
+    --green: #22c55e;
+    --green-bg: rgba(34,197,94,0.1);
+    --green-border: rgba(34,197,94,0.25);
+    --shield: #a78bfa;
+    --shield-bg: rgba(167,139,250,0.1);
+    --shield-border: rgba(167,139,250,0.25);
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Inter', sans-serif;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* Nav */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(13,15,18,0.9);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    height: 56px;
+  }
+  .nav-logo {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .nav-logo .icon-dot {
+    width: 8px; height: 8px;
+    background: var(--green);
+    border-radius: 50%;
+    box-shadow: 0 0 6px var(--green);
+  }
+  .nav-links {
+    display: flex;
+    gap: 0;
+    margin-left: auto;
+  }
+  .nav-btn {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: var(--sans);
+    font-size: 14px;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: color 0.15s, background 0.15s;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .nav-btn:hover { color: var(--text); background: var(--bg3); }
+  .nav-btn.active { color: var(--text); background: var(--bg3); }
+  .nav-cta {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 7px 16px;
+    border-radius: 7px;
+    cursor: pointer;
+    margin-left: 8px;
+    transition: background 0.15s;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .nav-cta:hover { background: var(--accent2); }
+
+  /* Pages */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ========= LANDING PAGE ========= */
+  .hero {
+    text-align: center;
+    padding: 100px 2rem 80px;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--green-bg);
+    border: 1px solid var(--green-border);
+    color: var(--green);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 28px;
+    letter-spacing: 0.03em;
+  }
+  .hero-badge .dot { width: 6px; height: 6px; background: var(--green); border-radius: 50%; }
+  h1 {
+    font-size: clamp(2.2rem, 5vw, 3.5rem);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 20px;
+    color: var(--text);
+  }
+  h1 span { color: var(--accent); }
+  .hero-sub {
+    font-size: 18px;
+    color: var(--muted);
+    max-width: 500px;
+    margin: 0 auto 40px;
+    line-height: 1.6;
+  }
+  .hero-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 500;
+    padding: 12px 28px;
+    border-radius: 9px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .btn-primary:hover { background: var(--accent2); transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-secondary {
+    background: var(--bg3);
+    color: var(--text);
+    border: 1px solid var(--border2);
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 500;
+    padding: 12px 24px;
+    border-radius: 9px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .btn-secondary:hover { background: #232738; border-color: rgba(255,255,255,0.2); }
+  .hero-note { font-size: 13px; color: var(--muted); }
+
+  /* Tray preview */
+  .tray-preview {
+    max-width: 640px;
+    margin: 60px auto;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .tray-icon-demo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    min-width: 120px;
+  }
+  .tray-icon-circle {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    transition: background 0.3s;
+  }
+  .tray-icon-circle.on { background: rgba(34,197,94,0.15); border: 2px solid var(--green-border); }
+  .tray-icon-circle.off { background: rgba(255,255,255,0.05); border: 2px solid var(--border2); }
+  .tray-label { font-size: 13px; color: var(--muted); text-align: center; }
+  .tray-info { flex: 1; min-width: 200px; }
+  .tray-info p { font-size: 14px; color: var(--muted); margin-bottom: 10px; }
+  .tray-info .action {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .tray-info .action svg { color: var(--accent); flex-shrink: 0; }
+  .kbd {
+    display: inline-flex;
+    align-items: center;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 5px;
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 1px 7px;
+    color: var(--muted);
+  }
+
+  /* Features */
+  .section {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 2rem 80px;
+  }
+  .section-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 40px;
+    letter-spacing: -0.01em;
+  }
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+  }
+  .feature-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    transition: border-color 0.2s;
+  }
+  .feature-card:hover { border-color: var(--border2); }
+  .feature-icon {
+    width: 40px; height: 40px;
+    background: rgba(79,142,247,0.1);
+    border: 1px solid rgba(79,142,247,0.2);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    margin-bottom: 14px;
+  }
+  .feature-card h3 {
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+  .feature-card p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+  /* Requirements */
+  .req-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+  }
+  .req-item {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .req-item .icon { font-size: 20px; }
+  .req-item .text {}
+  .req-item .text strong { font-size: 14px; font-weight: 500; display: block; }
+  .req-item .text span { font-size: 13px; color: var(--muted); }
+
+  /* Download card */
+  .download-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .dl-info h3 { font-size: 20px; font-weight: 600; margin-bottom: 6px; }
+  .dl-info p { font-size: 14px; color: var(--muted); }
+  .dl-meta { display: flex; gap: 16px; margin-top: 12px; flex-wrap: wrap; }
+  .dl-meta span {
+    font-size: 12px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--bg3);
+    padding: 4px 10px;
+    border-radius: 5px;
+  }
+  .dl-actions { display: flex; flex-direction: column; gap: 10px; align-items: flex-end; }
+
+  /* Install steps */
+  .steps { display: flex; flex-direction: column; gap: 0; }
+  .step {
+    display: flex;
+    gap: 20px;
+    padding-bottom: 32px;
+    position: relative;
+  }
+  .step:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    left: 19px;
+    top: 44px;
+    bottom: 0;
+    width: 1px;
+    background: var(--border);
+  }
+  .step-num {
+    width: 40px; height: 40px;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 500;
+    flex-shrink: 0;
+    color: var(--accent);
+  }
+  .step-content h3 { font-size: 16px; font-weight: 500; margin-bottom: 6px; padding-top: 8px; }
+  .step-content p { font-size: 14px; color: var(--muted); }
+  .code-block {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-top: 10px;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: #a8d8a8;
+  }
+
+  /* ========= SOURCE PAGE ========= */
+  .source-layout {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 48px 2rem 80px;
+  }
+  .source-header { margin-bottom: 40px; }
+  .source-header h2 { font-size: 28px; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 8px; }
+  .source-header p { font-size: 15px; color: var(--muted); }
+  .file-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 0;
+    overflow-x: auto;
+  }
+  .file-tab {
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 13px;
+    padding: 10px 18px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color 0.15s, border-color 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: -1px;
+  }
+  .file-tab:hover { color: var(--text); }
+  .file-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .file-ext-badge {
+    font-size: 10px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 5px;
+    color: var(--muted);
+  }
+  .file-content { display: none; }
+  .file-content.active { display: block; }
+  .code-viewer {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    overflow: hidden;
+  }
+  .code-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg3);
+  }
+  .code-toolbar span { font-size: 13px; color: var(--muted); font-family: var(--mono); }
+  .copy-btn {
+    background: none;
+    border: 1px solid var(--border2);
+    color: var(--muted);
+    font-family: var(--sans);
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .copy-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.25); }
+  .code-scroll {
+    overflow-x: auto;
+    max-height: 540px;
+    overflow-y: auto;
+  }
+  pre {
+    margin: 0;
+    padding: 20px 24px;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.75;
+    color: #cdd6f4;
+    tab-size: 4;
+  }
+  pre .kw { color: #cba6f7; }
+  pre .fn { color: #89b4fa; }
+  pre .st { color: #a6e3a1; }
+  pre .cm { color: #6c7086; font-style: italic; }
+  pre .nm { color: #fab387; }
+  pre .op { color: #89dceb; }
+  pre .dc { color: #f38ba8; }
+
+  .struct-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .struct-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+  }
+  .struct-card .fname {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+  .struct-card .fdesc { font-size: 13px; color: var(--muted); }
+  .struct-card .fsize { font-size: 12px; color: var(--muted); margin-top: 6px; opacity: 0.6; }
+
+  /* footer */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 2rem;
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  /* Privacy banner */
+  .privacy-banner {
+    background: linear-gradient(135deg, rgba(167,139,250,0.07) 0%, rgba(79,142,247,0.07) 100%);
+    border: 1px solid var(--shield-border);
+    border-radius: 16px;
+    padding: 40px 48px;
+    max-width: 900px;
+    margin: 0 auto 0;
+    display: flex;
+    gap: 32px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .privacy-banner .shield-icon {
+    font-size: 56px;
+    flex-shrink: 0;
+    filter: drop-shadow(0 0 18px rgba(167,139,250,0.35));
+  }
+  .privacy-banner h2 {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+  .privacy-banner p {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.65;
+    max-width: 560px;
+  }
+  .privacy-pills {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+  }
+  .privacy-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--shield-bg);
+    border: 1px solid var(--shield-border);
+    color: var(--shield);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 5px 12px;
+    border-radius: 20px;
+  }
+  /* Trust row */
+  .trust-row {
+    display: flex;
+    gap: 0;
+    justify-content: center;
+    flex-wrap: wrap;
+    max-width: 900px;
+    margin: 0 auto;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .trust-item {
+    flex: 1;
+    min-width: 160px;
+    padding: 20px 16px;
+    text-align: center;
+    border-right: 1px solid var(--border);
+  }
+  .trust-item:last-child { border-right: none; }
+  .trust-item .t-icon { font-size: 22px; margin-bottom: 6px; }
+  .trust-item .t-label { font-size: 13px; font-weight: 500; margin-bottom: 3px; }
+  .trust-item .t-sub { font-size: 12px; color: var(--muted); }
+  /* Use-case scenario cards */
+  .scenario-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+  }
+  .scenario-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .scenario-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+    opacity: 0.5;
+  }
+  .scenario-card:hover { border-color: var(--border2); }
+  .scenario-card .sc-icon { font-size: 26px; margin-bottom: 12px; }
+  .scenario-card h3 { font-size: 14px; font-weight: 500; margin-bottom: 6px; }
+  .scenario-card p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  /* Security details */
+  .security-detail {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 32px;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .security-detail .sd-icon {
+    font-size: 28px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .security-detail h3 { font-size: 15px; font-weight: 500; margin-bottom: 6px; }
+  .security-detail p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+  @media (max-width: 600px) {
+    nav { padding: 0 1rem; gap: 1rem; }
+    .hero { padding: 60px 1rem 50px; }
+    .tray-preview { flex-direction: column; }
+    .dl-actions { align-items: stretch; }
+    .download-card { flex-direction: column; }
+    .privacy-banner { padding: 28px 20px; }
+    .trust-item { min-width: 120px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-logo" onclick="showPage('landing');return false;">
+    <span class="icon-dot"></span>
+    Desktop Icon Toggle
+  </a>
+  <div class="nav-links">
+    <button class="nav-btn active" id="nav-landing" onclick="showPage('landing')">
+      ⬇ Download
+    </button>
+    <button class="nav-btn" id="nav-source" onclick="showPage('source')">
+      &lt;/&gt; Source
+    </button>
+    <button class="nav-btn" id="nav-privacy" onclick="showPage('privacy')">
+      🔒 Privacy
+    </button>
+    <a href="https://github.com/Harsimrat-creation/desktop-icon-toggle" target="_blank" class="nav-btn">
+      GitHub ↗
+    </a>
+    <a href="#download-section" class="nav-cta" onclick="showPage('landing');return true;">
+      ⬇ Download .exe
+    </a>
+  </div>
+</nav>
+
+<!-- ============ LANDING PAGE ============ -->
+<div id="page-landing" class="page active">
+
+  <div class="hero">
+    <div class="hero-badge"><span class="dot"></span> v1.0.0 — Secure · Private · Windows 10 / 11</div>
+    <h1>Hide your desktop data<br><span>from prying eyes — instantly</span></h1>
+    <p class="hero-sub">One click hides every file, folder, and document on your desktop. No one sees your sensitive data when you share your screen, take a screenshot, or step away from your PC.</p>
+    <div class="hero-actions">
+      <a href="DesktopIconToggle.exe" download class="btn-primary">⬇ Download .exe</a>
+    </div>
+    <p class="hero-note">Free & open source · No admin required · ~25 MB</p>
+  </div>
+
+  <!-- Tray visual -->
+  <div style="max-width:900px;margin:0 auto;padding:0 2rem;">
+    <div class="tray-preview">
+      <div class="tray-icon-demo">
+        <div class="tray-icon-circle on" id="tray-demo">🟢</div>
+        <div class="tray-label" id="tray-status">Icons visible</div>
+        <button onclick="demoToggle()" style="margin-top:4px;background:var(--bg3);border:1px solid var(--border2);color:var(--muted);font-size:12px;padding:5px 14px;border-radius:6px;cursor:pointer;">Try toggle</button>
+      </div>
+      <div class="tray-info">
+        <p>Lives quietly in your system tray. Click to toggle, right-click for options.</p>
+        <div class="action">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          Double-click tray icon to toggle icons on/off
+        </div>
+        <div class="action">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+          State saved — remembered across restarts
+        </div>
+        <div class="action">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48 2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48 2.83-2.83"/></svg>
+          Auto-starts on login (optional, controllable)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Privacy / Security banner -->
+  <div class="section" style="padding-top:64px;padding-bottom:20px;">
+    <div class="privacy-banner">
+      <div class="shield-icon">🛡</div>
+      <div>
+        <h2>Your desktop stays private — always</h2>
+        <p>Every file name, document, screenshot, and folder sitting on your desktop is instantly invisible to others the moment you toggle. No traces left behind, no data sent anywhere, no network access required. Everything happens locally on your own PC.</p>
+        <div class="privacy-pills">
+          <span class="privacy-pill">🔒 No internet connection</span>
+          <span class="privacy-pill">🚫 No data collection</span>
+          <span class="privacy-pill">👁 No screen recording</span>
+          <span class="privacy-pill">📂 Nothing is deleted</span>
+          <span class="privacy-pill">✅ 100% reversible</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trust row -->
+  <div class="section" style="padding-bottom:48px;">
+    <div class="trust-row">
+      <div class="trust-item">
+        <div class="t-icon">🔒</div>
+        <div class="t-label">Zero network calls</div>
+        <div class="t-sub">Works fully offline</div>
+      </div>
+      <div class="trust-item">
+        <div class="t-icon">🧬</div>
+        <div class="t-label">Open source</div>
+        <div class="t-sub">Audit every line of code</div>
+      </div>
+      <div class="trust-item">
+        <div class="t-icon">🛡</div>
+        <div class="t-label">No admin rights</div>
+        <div class="t-sub">No UAC prompt ever</div>
+      </div>
+      <div class="trust-item">
+        <div class="t-icon">🗑</div>
+        <div class="t-label">Nothing deleted</div>
+        <div class="t-sub">Icons just hidden, not removed</div>
+      </div>
+      <div class="trust-item">
+        <div class="t-icon">⚡</div>
+        <div class="t-label">Instant toggle</div>
+        <div class="t-sub">Under 100ms response</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Use-case scenarios -->
+  <div class="section" style="padding-top:0;padding-bottom:60px;">
+    <div class="section-label">Privacy use cases</div>
+    <div class="section-title">When your desktop needs to stay private</div>
+    <div class="scenario-grid">
+      <div class="scenario-card">
+        <div class="sc-icon">📽</div>
+        <h3>Screen sharing at work</h3>
+        <p>Before you share your screen in a Zoom or Teams meeting, hide everything on your desktop. Colleagues see only what you choose to show.</p>
+      </div>
+      <div class="scenario-card">
+        <div class="sc-icon">📸</div>
+        <h3>Taking screenshots</h3>
+        <p>Snap screenshots for tutorials, bug reports, or social media without worrying about sensitive file names or documents appearing in the background.</p>
+      </div>
+      <div class="scenario-card">
+        <div class="sc-icon">☕</div>
+        <h3>Stepping away from your desk</h3>
+        <p>Heading to a coffee break in a shared office? One click hides your work so nobody can glance at your screen and see what you're working on.</p>
+      </div>
+      <div class="scenario-card">
+        <div class="sc-icon">👨‍👩‍👧</div>
+        <h3>Handing your PC to someone</h3>
+        <p>Let a family member, friend, or colleague use your computer without exposing your personal files and project folders sitting on the desktop.</p>
+      </div>
+      <div class="scenario-card">
+        <div class="sc-icon">🏢</div>
+        <h3>Client demos & presentations</h3>
+        <p>Present slides or demos to a client from a clean, distraction-free desktop. Toggle icons back in seconds when the presentation ends.</p>
+      </div>
+      <div class="scenario-card">
+        <div class="sc-icon">🎮</div>
+        <h3>Streaming & content creation</h3>
+        <p>Keep your live stream or recorded screen clean. No viewers see your file names, personal projects, or anything you haven't deliberately put on screen.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Security details -->
+  <div class="section" style="padding-top:0;padding-bottom:60px;">
+    <div class="section-label">Security</div>
+    <div class="section-title">How it keeps your data safe</div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="security-detail">
+        <div class="sd-icon">🖥</div>
+        <div>
+          <h3>Uses the Windows Shell API — not a hack</h3>
+          <p>The app calls the official Windows <code style="font-family:var(--mono);font-size:12px;color:var(--accent)">SysListView32</code> control to show or hide desktop icons. This is the same mechanism used by Windows itself — no low-level tricks, no memory patching, no driver installation.</p>
+        </div>
+      </div>
+      <div class="security-detail">
+        <div class="sd-icon">📦</div>
+        <div>
+          <h3>Your files are never touched</h3>
+          <p>Hiding icons does not move, delete, encrypt, or modify a single file. It simply tells Windows to stop rendering the icon layer on your desktop. Toggle it back and everything reappears exactly as you left it.</p>
+        </div>
+      </div>
+      <div class="security-detail">
+        <div class="sd-icon">🌐</div>
+        <div>
+          <h3>No network access — ever</h3>
+          <p>The app has no internet connectivity. It writes one small config file to your home folder (<code style="font-family:var(--mono);font-size:12px;color:var(--accent)">~/.desktop_icon_toggle/config.json</code>) to remember your last state. That is the only thing it writes. Nothing is sent anywhere.</p>
+        </div>
+      </div>
+      <div class="security-detail">
+        <div class="sd-icon">🔬</div>
+        <div>
+          <h3>Fully auditable — open source, MIT licensed</h3>
+          <p>Every line of code is on GitHub. You can read it, compile it yourself, or run it directly from source with Python. There is no obfuscation, no telemetry, and no hidden behaviour.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Features -->
+  <div class="section" style="padding-top:60px;">
+    <div class="section-label">Features</div>
+    <div class="section-title">Built for privacy, designed for speed</div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🛡</div>
+        <h3>Instant desktop privacy</h3>
+        <p>One double-click and every file, folder, and document on your desktop vanishes from sight. Toggle back just as fast.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🖥</div>
+        <h3>System tray — always ready</h3>
+        <p>Runs silently in the background. No window, no taskbar entry — your privacy toggle is always one click away in the corner.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💾</div>
+        <h3>Remembers your last state</h3>
+        <p>If you hid your icons before shutting down, they stay hidden on next login. Your privacy preference is always respected.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🚀</div>
+        <h3>Starts with Windows</h3>
+        <p>Loads automatically at login so your desktop privacy setting is applied from the moment your PC starts. Disable anytime from the tray menu.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🛡</div>
+        <h3>No admin, no UAC</h3>
+        <p>Uses the Windows Shell API — no elevated permissions, no UAC popups, no security prompts. Safe by design.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔓</div>
+        <h3>Open source & auditable</h3>
+        <p>Written in Python. Read every line, compile it yourself, or run directly from source. MIT licensed — full transparency, zero surprises.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Requirements -->
+  <div class="section">
+    <div class="section-label">Requirements</div>
+    <div class="section-title">What you need</div>
+    <div class="req-grid">
+      <div class="req-item">
+        <span class="icon">🪟</span>
+        <div class="text">
+          <strong>Windows 10 or 11</strong>
+          <span>64-bit required</span>
+        </div>
+      </div>
+      <div class="req-item">
+        <span class="icon">📦</span>
+        <div class="text">
+          <strong>No Python needed</strong>
+          <span>Bundled in the .exe</span>
+        </div>
+      </div>
+      <div class="req-item">
+        <span class="icon">💽</span>
+        <div class="text">
+          <strong>~25 MB disk</strong>
+          <span>Minimal footprint</span>
+        </div>
+      </div>
+      <div class="req-item">
+        <span class="icon">🧠</span>
+        <div class="text">
+          <strong>~10 MB RAM</strong>
+          <span>Barely noticeable</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Download -->
+  <div class="section" id="download-section">
+    <div class="section-label">Download</div>
+    <div class="section-title">Get the latest release</div>
+    <div class="download-card">
+      <div class="dl-info">
+        <h3>Desktop Icon Toggle v1.0.0</h3>
+        <p>Stable release · Built with PyInstaller · Windows 10/11 x64</p>
+        <div class="dl-meta">
+          <span>📅 June 2025</span>
+          <span>💾 ~25 MB</span>
+          <span>✅ No dependencies</span>
+        </div>
+      </div>
+      <div class="dl-actions">
+        <a href="DesktopIconToggle.exe" download class="btn-primary" style="min-width:200px;justify-content:center;">
+          ⬇ Download .exe
+        </a>
+        <a href="https://github.com/Harsimrat-creation/desktop-icon-toggle/releases/latest/download/DesktopIconToggle.exe" target="_blank" class="btn-secondary" style="min-width:200px;justify-content:center;font-size:14px;">
+          All releases on GitHub ↗
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Install steps -->
+  <div class="section">
+    <div class="section-label">Installation</div>
+    <div class="section-title">Up and running in 30 seconds</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h3>Download the .exe</h3>
+          <p>Click "Download .exe" above. Your browser may warn about an unsigned executable — click "Keep" or "Run anyway". This is normal for open-source apps.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h3>Run it — no install needed</h3>
+          <p>Double-click <code style="font-family:var(--mono);font-size:13px;color:var(--accent)">DesktopIconToggle.exe</code>. It launches straight into the system tray — no setup wizard, nothing copied outside the folder you put it in.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h3>Look in your system tray</h3>
+          <p>The app starts automatically. Find it in the bottom-right tray — a green circle means icons are visible, gray means hidden.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h3>Toggle away</h3>
+          <p>Double-click the tray icon to toggle. Right-click for options: disable autostart, quit, restore icons.</p>
+          <div class="code-block">Right-click → "Disable autostart on login" to stop it from launching with Windows</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-landing -->
+
+
+<!-- ============ SOURCE PAGE ============ -->
+<div id="page-source" class="page">
+  <div class="source-layout">
+    <div class="source-header">
+      <h2>Source code</h2>
+      <p>Four files — Python logic, batch launchers, and a PowerShell startup helper.</p>
+    </div>
+
+    <div class="struct-grid">
+      <div class="struct-card">
+        <div class="fname">desktop_icon_toggle.py</div>
+        <div class="fdesc">Main app — tray logic, Windows API, config</div>
+        <div class="fsize">~200 lines · Python</div>
+      </div>
+      <div class="struct-card">
+        <div class="fname">run_app.bat</div>
+        <div class="fdesc">Installs deps and starts the app</div>
+        <div class="fsize">~25 lines · Batch</div>
+      </div>
+      <div class="struct-card">
+        <div class="fname">setup_startup.bat</div>
+        <div class="fdesc">Creates a Windows startup shortcut</div>
+        <div class="fsize">~35 lines · Batch</div>
+      </div>
+      <div class="struct-card">
+        <div class="fname">create_startup_shortcut.ps1</div>
+        <div class="fdesc">PowerShell shortcut helper</div>
+        <div class="fsize">~15 lines · PowerShell</div>
+      </div>
+    </div>
+
+    <div class="file-tabs">
+      <button class="file-tab active" onclick="showFile('py')" id="tab-py">
+        desktop_icon_toggle<span class="file-ext-badge">.py</span>
+      </button>
+      <button class="file-tab" onclick="showFile('bat1')" id="tab-bat1">
+        run_app<span class="file-ext-badge">.bat</span>
+      </button>
+      <button class="file-tab" onclick="showFile('bat2')" id="tab-bat2">
+        setup_startup<span class="file-ext-badge">.bat</span>
+      </button>
+    </div>
+
+    <!-- Python file -->
+    <div class="file-content active" id="file-py">
+      <div class="code-viewer">
+        <div class="code-toolbar">
+          <span>desktop_icon_toggle.py · Python · 197 lines</span>
+          <button class="copy-btn" onclick="copyCode('code-py')">Copy</button>
+        </div>
+        <div class="code-scroll">
+          <pre id="code-py"><span class="cm">"""
+Desktop Icon Toggle - System Tray App
+======================================
+Hides/shows desktop icons on double-click.
+Runs silently in the system tray.
+
+Requirements:
+    pip install pystray pillow pywin32
+
+Run:
+    pythonw desktop_icon_toggle.py    (no console window)
+    python desktop_icon_toggle.py     (with console, for testing)
+"""</span>
+
+<span class="kw">import</span> ctypes
+<span class="kw">import</span> threading
+<span class="kw">import</span> sys
+<span class="kw">import</span> json
+<span class="kw">import</span> os
+<span class="kw">from</span> pathlib <span class="kw">import</span> Path
+<span class="kw">from</span> PIL <span class="kw">import</span> Image, ImageDraw
+<span class="kw">import</span> pystray
+<span class="kw">import</span> psutil
+
+<span class="cm"># Windows API constants</span>
+WM_COMMAND = <span class="nm">0x0111</span>
+MOD_ALT    = <span class="nm">0x0001</span>
+VK_D       = <span class="nm">0x44</span>
+
+user32  = ctypes.windll.user32
+shell32 = ctypes.windll.shell32
+
+<span class="cm"># Configuration file path</span>
+CONFIG_FILE = Path.home() / <span class="st">".desktop_icon_toggle"</span> / <span class="st">"config.json"</span>
+
+<span class="cm"># Global state</span>
+icons_visible = <span class="kw">True</span>
+
+
+<span class="kw">def</span> <span class="fn">check_single_instance</span>():
+    <span class="st">"""Ensure only one instance runs. Kill others if found."""</span>
+    current_pid = os.getpid()
+    script_name = <span class="st">"desktop_icon_toggle.py"</span>
+    <span class="kw">for</span> proc <span class="kw">in</span> psutil.process_iter([<span class="st">'pid'</span>, <span class="st">'name'</span>, <span class="st">'cmdline'</span>]):
+        <span class="kw">try</span>:
+            cmdline = proc.info[<span class="st">'cmdline'</span>]
+            <span class="kw">if</span> cmdline <span class="kw">and</span> script_name <span class="kw">in</span> <span class="st">' '</span>.join(cmdline):
+                <span class="kw">if</span> proc.info[<span class="st">'pid'</span>] != current_pid:
+                    proc.kill()
+        <span class="kw">except</span> (psutil.NoSuchProcess, psutil.AccessDenied):
+            <span class="kw">pass</span>
+
+
+<span class="kw">def</span> <span class="fn">load_config</span>():
+    <span class="kw">global</span> icons_visible
+    <span class="kw">if</span> CONFIG_FILE.exists():
+        <span class="kw">with</span> <span class="fn">open</span>(CONFIG_FILE, <span class="st">'r'</span>) <span class="kw">as</span> f:
+            config = json.load(f)
+            icons_visible = config.get(<span class="st">'icons_visible'</span>, <span class="kw">True</span>)
+
+
+<span class="kw">def</span> <span class="fn">save_config</span>():
+    CONFIG_FILE.parent.mkdir(parents=<span class="kw">True</span>, exist_ok=<span class="kw">True</span>)
+    <span class="kw">with</span> <span class="fn">open</span>(CONFIG_FILE, <span class="st">'w'</span>) <span class="kw">as</span> f:
+        json.dump({<span class="st">'icons_visible'</span>: icons_visible}, f)
+
+
+<span class="kw">def</span> <span class="fn">get_desktop_hwnd</span>():
+    <span class="st">"""Find the ShellDefView window that controls desktop icons."""</span>
+    progman = user32.FindWindowW(<span class="st">"Progman"</span>, <span class="kw">None</span>)
+    user32.SendMessageTimeoutW(progman, <span class="nm">0x052C</span>, <span class="nm">0</span>, <span class="nm">0</span>, <span class="nm">0x0000</span>, <span class="nm">1000</span>, <span class="kw">None</span>)
+    desktop_hwnd = [<span class="kw">None</span>]
+
+    <span class="kw">def</span> <span class="fn">enum_windows_proc</span>(hwnd, lParam):
+        shell_dll_view = user32.FindWindowExW(hwnd, <span class="kw">None</span>, <span class="st">"SHELLDLL_DefView"</span>, <span class="kw">None</span>)
+        <span class="kw">if</span> shell_dll_view:
+            desktop_hwnd[<span class="nm">0</span>] = shell_dll_view
+        <span class="kw">return True</span>
+
+    EnumProc = ctypes.WINFUNCTYPE(ctypes.c_bool, ctypes.POINTER(ctypes.c_int), ctypes.POINTER(ctypes.c_int))
+    user32.EnumWindows(EnumProc(enum_windows_proc), <span class="kw">None</span>)
+
+    <span class="kw">if not</span> desktop_hwnd[<span class="nm">0</span>]:
+        desktop_hwnd[<span class="nm">0</span>] = user32.FindWindowExW(progman, <span class="kw">None</span>, <span class="st">"SHELLDLL_DefView"</span>, <span class="kw">None</span>)
+    <span class="kw">return</span> desktop_hwnd[<span class="nm">0</span>]
+
+
+<span class="kw">def</span> <span class="fn">set_desktop_icons_visible</span>(visible: <span class="fn">bool</span>):
+    shell_view = get_desktop_hwnd()
+    <span class="kw">if not</span> shell_view:
+        <span class="kw">import</span> winreg
+        key_path = <span class="st">r"Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"</span>
+        <span class="kw">with</span> winreg.OpenKey(winreg.HKEY_CURRENT_USER, key_path, <span class="nm">0</span>, winreg.KEY_SET_VALUE) <span class="kw">as</span> key:
+            winreg.SetValueEx(key, <span class="st">"HideIcons"</span>, <span class="nm">0</span>, winreg.REG_DWORD, <span class="nm">0</span> <span class="kw">if</span> visible <span class="kw">else</span> <span class="nm">1</span>)
+        shell32.SHChangeNotify(<span class="nm">0x8000000</span>, <span class="nm">0x1000</span>, <span class="kw">None</span>, <span class="kw">None</span>)
+        <span class="kw">return</span>
+    show_flag = <span class="nm">5</span> <span class="kw">if</span> visible <span class="kw">else</span> <span class="nm">0</span>
+    list_view = user32.FindWindowExW(shell_view, <span class="kw">None</span>, <span class="st">"SysListView32"</span>, <span class="kw">None</span>)
+    <span class="kw">if</span> list_view:
+        user32.ShowWindow(list_view, show_flag)
+
+
+<span class="kw">def</span> <span class="fn">create_tray_icon_image</span>(visible: <span class="fn">bool</span>) -> Image.Image:
+    size = <span class="nm">64</span>
+    img  = Image.new(<span class="st">"RGBA"</span>, (size, size), (<span class="nm">0</span>, <span class="nm">0</span>, <span class="nm">0</span>, <span class="nm">0</span>))
+    draw = ImageDraw.Draw(img)
+    <span class="kw">if</span> visible:
+        draw.ellipse([<span class="nm">4</span>, <span class="nm">4</span>, <span class="nm">60</span>, <span class="nm">60</span>], fill=(<span class="nm">40</span>, <span class="nm">167</span>, <span class="nm">69</span>, <span class="nm">255</span>))
+        <span class="kw">for</span> row <span class="kw">in range</span>(<span class="nm">2</span>):
+            <span class="kw">for</span> col <span class="kw">in range</span>(<span class="nm">2</span>):
+                x = <span class="nm">16</span> + col * <span class="nm">18</span>
+                y = <span class="nm">16</span> + row * <span class="nm">18</span>
+                draw.rectangle([x, y, x+<span class="nm">12</span>, y+<span class="nm">12</span>], fill=(<span class="nm">255</span>, <span class="nm">255</span>, <span class="nm">255</span>, <span class="nm">200</span>))
+    <span class="kw">else</span>:
+        draw.ellipse([<span class="nm">4</span>, <span class="nm">4</span>, <span class="nm">60</span>, <span class="nm">60</span>], fill=(<span class="nm">108</span>, <span class="nm">117</span>, <span class="nm">125</span>, <span class="nm">255</span>))
+        draw.line([<span class="nm">20</span>, <span class="nm">20</span>, <span class="nm">44</span>, <span class="nm">44</span>], fill=(<span class="nm">255</span>, <span class="nm">255</span>, <span class="nm">255</span>, <span class="nm">220</span>), width=<span class="nm">5</span>)
+        draw.line([<span class="nm">44</span>, <span class="nm">20</span>, <span class="nm">20</span>, <span class="nm">44</span>], fill=(<span class="nm">255</span>, <span class="nm">255</span>, <span class="nm">255</span>, <span class="nm">220</span>), width=<span class="nm">5</span>)
+    <span class="kw">return</span> img
+
+
+<span class="kw">def</span> <span class="fn">toggle_icons</span>(icon, item=<span class="kw">None</span>):
+    <span class="kw">global</span> icons_visible
+    icons_visible = <span class="kw">not</span> icons_visible
+    set_desktop_icons_visible(icons_visible)
+    save_config()
+    update_tray(icon)
+
+
+<span class="kw">def</span> <span class="fn">update_tray</span>(icon):
+    icon.icon  = create_tray_icon_image(icons_visible)
+    icon.title = (<span class="st">"Desktop Icons: VISIBLE\nDouble-click to hide"</span>
+                  <span class="kw">if</span> icons_visible
+                  <span class="kw">else</span> <span class="st">"Desktop Icons: HIDDEN\nDouble-click to show"</span>)
+
+
+<span class="kw">def</span> <span class="fn">quit_app</span>(icon, item):
+    <span class="kw">if not</span> icons_visible:
+        set_desktop_icons_visible(<span class="kw">True</span>)
+    icon.stop()
+
+
+<span class="kw">def</span> <span class="fn">setup_autostart</span>(enable: <span class="fn">bool</span>):
+    <span class="kw">import</span> winreg
+    key_path = <span class="st">r"Software\Microsoft\Windows\CurrentVersion\Run"</span>
+    app_name = <span class="st">"DesktopIconToggle"</span>
+    exe_path = <span class="st">f'pythonw "{sys.argv[0]}"'</span>
+    <span class="kw">with</span> winreg.OpenKey(winreg.HKEY_CURRENT_USER, key_path, <span class="nm">0</span>, winreg.KEY_SET_VALUE) <span class="kw">as</span> key:
+        <span class="kw">if</span> enable:
+            winreg.SetValueEx(key, app_name, <span class="nm">0</span>, winreg.REG_SZ, exe_path)
+        <span class="kw">else</span>:
+            <span class="kw">try</span>: winreg.DeleteValue(key, app_name)
+            <span class="kw">except</span> FileNotFoundError: <span class="kw">pass</span>
+
+
+<span class="kw">def</span> <span class="fn">main</span>():
+    <span class="kw">global</span> icons_visible
+    check_single_instance()
+    load_config()
+    setup_autostart(<span class="kw">True</span>)
+    set_desktop_icons_visible(icons_visible)
+
+    image = create_tray_icon_image(icons_visible)
+    menu  = pystray.Menu(
+        pystray.MenuItem(<span class="st">"Show / Hide Icons"</span>, toggle_icons, default=<span class="kw">True</span>),
+        pystray.Menu.SEPARATOR,
+        pystray.MenuItem(<span class="st">"Disable autostart on login"</span>, <span class="kw">lambda</span> icon, item: setup_autostart(<span class="kw">False</span>)),
+        pystray.Menu.SEPARATOR,
+        pystray.MenuItem(<span class="st">"Quit (restores icons)"</span>, quit_app),
+    )
+    icon = pystray.Icon(
+        name=<span class="st">"DesktopIconToggle"</span>,
+        icon=image,
+        title=<span class="st">"Desktop Icons: HIDDEN\nDouble-click to show"</span> <span class="kw">if not</span> icons_visible
+              <span class="kw">else</span> <span class="st">"Desktop Icons: VISIBLE\nDouble-click to hide"</span>,
+        menu=menu,
+    )
+    icon.on_double_click = on_double_click
+    icon.run()
+
+<span class="kw">if</span> __name__ == <span class="st">"__main__"</span>:
+    main()</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- run_app.bat -->
+    <div class="file-content" id="file-bat1">
+      <div class="code-viewer">
+        <div class="code-toolbar">
+          <span>run_app.bat · Windows Batch · 25 lines</span>
+          <button class="copy-btn" onclick="copyCode('code-bat1')">Copy</button>
+        </div>
+        <div class="code-scroll">
+          <pre id="code-bat1"><span class="cm">@echo off</span>
+<span class="kw">echo</span> ============================================
+<span class="kw">echo</span>   Desktop Icon Toggle - Setup &amp; Run
+<span class="kw">echo</span> ============================================
+<span class="kw">echo</span>.
+
+<span class="cm">REM Check if Python is installed</span>
+python --version >nul 2>&amp;1
+<span class="kw">if</span> errorlevel 1 (
+    <span class="kw">echo</span> <span class="dc">ERROR: Python is not installed or not in PATH.</span>
+    <span class="kw">echo</span> Please install Python from https://www.python.org/downloads/
+    pause
+    exit /b 1
+)
+
+<span class="kw">echo</span> [1/4] Stopping any existing instances...
+taskkill /F /IM pythonw.exe 2>nul
+timeout /t 1 >nul
+
+<span class="kw">echo</span> [2/4] Installing required packages...
+pip install pystray pillow pywin32 psutil --quiet
+
+<span class="kw">echo</span> [3/4] Setting up autostart...
+powershell -NoProfile -ExecutionPolicy Bypass -File <span class="st">"%~dp0create_startup_shortcut.ps1"</span> 2>nul
+
+<span class="kw">echo</span> [4/4] Starting Desktop Icon Toggle...
+<span class="kw">echo</span>.
+<span class="kw">echo</span> The app will run in your system tray (bottom-right corner).
+<span class="kw">echo</span> Double-click the tray icon to toggle desktop icons.
+<span class="kw">echo</span> Right-click for more options.
+<span class="kw">echo</span>.
+
+start <span class="st">""</span> pythonw <span class="st">"%~dp0desktop_icon_toggle.py"</span>
+<span class="kw">echo</span> App started! Check your system tray.
+timeout /t 3 >nul</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- setup_startup.bat -->
+    <div class="file-content" id="file-bat2">
+      <div class="code-viewer">
+        <div class="code-toolbar">
+          <span>setup_startup.bat · Windows Batch · 35 lines</span>
+          <button class="copy-btn" onclick="copyCode('code-bat2')">Copy</button>
+        </div>
+        <div class="code-scroll">
+          <pre id="code-bat2"><span class="cm">@echo off</span>
+<span class="kw">echo</span> ============================================
+<span class="kw">echo</span>  Desktop Icon Toggle - Setup Startup
+<span class="kw">echo</span> ============================================
+<span class="kw">echo</span>.
+
+python --version >nul 2>&amp;1
+<span class="kw">if</span> errorlevel 1 (
+    <span class="kw">echo</span> <span class="dc">ERROR: Python is not installed or not in PATH.</span>
+    pause
+    exit /b 1
+)
+
+<span class="kw">echo</span> Installing required packages...
+pip install pystray pillow pywin32 --quiet
+
+<span class="kw">echo</span>.
+<span class="kw">echo</span> Creating startup shortcut...
+
+set SCRIPT_DIR=<span class="st">%~dp0</span>
+set SCRIPT_PATH=<span class="st">%SCRIPT_DIR%desktop_icon_toggle.py</span>
+set <span class="st">"STARTUP_DIR=%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup"</span>
+
+powershell -NoProfile -Command <span class="st">"^
+$WshShell = New-Object -ComObject WScript.Shell; ^
+$ShortcutPath = '%STARTUP_DIR%\DesktopIconToggle.lnk'; ^
+$Shortcut = $WshShell.CreateShortcut($ShortcutPath); ^
+$Shortcut.TargetPath = 'pythonw'; ^
+$Shortcut.Arguments = '%SCRIPT_PATH%'; ^
+$Shortcut.WorkingDirectory = '%SCRIPT_DIR%'; ^
+$Shortcut.WindowStyle = 7; ^
+$Shortcut.IconLocation = 'shell32.dll, 44'; ^
+$Shortcut.Save(); ^
+Write-Host 'Shortcut created: ' $ShortcutPath"</span>
+
+<span class="kw">echo</span>.
+<span class="kw">echo</span> Setup complete! The app will start automatically on login.
+timeout /t 3 >nul</pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /page-source -->
+
+<!-- PRIVACY POLICY PAGE -->
+<div id="page-privacy" class="page">
+  <div style="max-width: 900px; margin: 0 auto; padding: 80px 2rem;">
+    <h1 style="font-size: 2.5rem; margin-bottom: 16px;">Privacy Policy</h1>
+    <p style="color: var(--muted); font-size: 14px; margin-bottom: 48px;"><strong>Last Updated:</strong> June 2024</p>
+
+    <div style="line-height: 1.8;">
+      <h2 style="font-size: 1.4rem; color: var(--text); margin-top: 40px; margin-bottom: 16px;">1. Introduction</h2>
+      <p style="color: var(--text); margin-bottom: 20px;">
+        We are committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website and use the Desktop Icon Toggle application.
+      </p>
+
+      <h2 style="font-size: 1.4rem; color: var(--text); margin-top: 40px; margin-bottom: 16px;">2. Information We Collect</h2>
+      <p style="color: var(--text); margin-bottom: 12px;">The Desktop Icon Toggle application is designed with privacy as a core principle. We collect minimal information:</p>
+      <ul style="margin-left: 20px; margin-bottom: 20px;">
+        <li style="color: var(--text); margin-bottom: 8px;"><strong>Local Configuration Only:</strong> Your preference settings (icon visibility state) are stored only on your local computer.</li>
+        <li style="color: var(--text); margin-bottom: 8px;"><strong>No Personal Data Collection:</strong> We do not collect, transmit, or store any personal information.</li>
+        <li style="color: var(--text); margin-bottom: 8px;"><strong>No Telemetry:</strong> The application does not send usage data, crash reports, or analytics to our servers.</li>
+        <li style="color: var(--text); margin-bottom: 8px;"><strong>No Tracking Cookies:</strong> Our website does not use tracking cookies or analytics services that identify you personally.</li>
+      </ul>
+
+      <h2 style="font-size: 1.4rem; color: var(--text); margin-top: 40px; margin-bottom: 16px;">3. Application Functionality</h2>
+      <p style="color: var(--text); margin-bottom: 20px;">
+        Desktop Icon Toggle is an open-source utility that runs entirely on your machine. It operates in your system tray and communicates only with your local Windows system to toggle desktop icon visibility. No data leaves your computer.
+      </p>
+
+      <h2 style="font-size: 1.4rem; color: var(--text); margin-top: 40px; margin-bottom: 16px;">4. Website Information</h2>
+      <p style="color: var(--text); margin-bottom: 12px;">When you visit our website:</p>
+      <ul style="margin-left: 20px; margin-bottom: 20px;">
+        <li style="color: var(--text); margin-bottom: 8px;"><strong>No Analytics:</strong> We do not track your browsing behavior or use third-party analytics tools.</li>
+        <li style="color: var(--text); margin-bottom: 8px;"><strong>No Cookies:</strong> We do not use cookies or similar tracking technologies.</li>
+        <li style="color: var(--text); margin-bottom: 8px;"><strong>GitHub Links:</strong> Links to GitHub may subject you to GitHub's privacy policy when you click them.</li>
+      </ul>
+
+      <h2 style="font-size: 1.4rem; color: var(--text); margin-top: 40px; margin-bottom: 16px;">5. Open Source Transparency</h2>
+      <p style="color: var(--text); margin-bottom: 20px;">
+        Desktop Icon Toggle is fully open-source software. You can review the complete source code on GitHub to verify that no unwanted data collection occurs. The code is licensed under the MIT License.
+      </p>
+
+      <h2 style="font-size: 1.4rem; color: var(--text); margin-top: 40px; margin-bottom: 16px;">6. Third-Party Services</h2>
+      <p style="color: var(--text); margin-bottom: 12px;">Our website may link to:</p>
+      <ul style="margin-left: 20px; margin-bottom: 20px;">
+        <li style="color: var(--text); margin-bottom: 8px;"><strong>GitHub:</strong> For source code and releases. See <a href="https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement" target="_blank" style="color: var(--accent); text-decoration: none;">GitHub's Privacy Policy</a></li>
+        <li style="color: var(--text); margin-bottom: 8px;"><strong>Python.org:</strong> For Python installation links. See <a href="https://www.python.org/privacy/" target="_blank" style="color: var(--accent); text-decoration: none;">Python's Privacy Policy</a></li>
+      </ul>
+      <p style="color: var(--text); margin-bottom: 20px;">We are not responsible for the privacy practices of these external sites.</p>
+
+      <h2 style="font-size: 1.4rem; color: var(--text); margin-top: 40px; margin-bottom: 16px;">7. Your Rights</h2>
+      <p style="color: var(--text); margin-bottom: 20px;">
+        Since we do not collect personal data, there is nothing to delete or export. Your settings remain entirely on your local machine under your full control. You can delete the application and all associated data at any time.
+      </p>
+
+      <h2 style="font-size: 1.4rem; color: var(--text); margin-top: 40px; margin-bottom: 16px;">8. Security</h2>
+      <p style="color: var(--text); margin-bottom: 20px;">
+        The application runs locally on your computer with standard Windows security protections. The source code is publicly available for security auditing. We recommend reviewing the code before installation if you have security concerns.
+      </p>
+
+      <h2 style="font-size: 1.4rem; color: var(--text); margin-top: 40px; margin-bottom: 16px;">9. Changes to This Policy</h2>
+      <p style="color: var(--text); margin-bottom: 20px;">
+        We may update this Privacy Policy occasionally. Changes will be posted on this page with an updated "Last Updated" date. We encourage you to review this policy regularly.
+      </p>
+
+      <h2 style="font-size: 1.4rem; color: var(--text); margin-top: 40px; margin-bottom: 16px;">10. Contact Us</h2>
+      <p style="color: var(--text); margin-bottom: 12px;">
+        If you have questions about this Privacy Policy, please contact us:
+      </p>
+      <ul style="margin-left: 20px; margin-bottom: 20px;">
+        <li style="color: var(--text); margin-bottom: 8px;"><strong>GitHub Issues:</strong> <a href="https://github.com/Harsimrat-creation/desktop-icon-toggle/issues" target="_blank" style="color: var(--accent); text-decoration: none;">github.com/Harsimrat-creation/desktop-icon-toggle/issues</a></li>
+        <li style="color: var(--text); margin-bottom: 8px;"><strong>GitHub Discussions:</strong> <a href="https://github.com/Harsimrat-creation/desktop-icon-toggle/discussions" target="_blank" style="color: var(--accent); text-decoration: none;">GitHub Discussions</a></li>
+      </ul>
+
+      <h2 style="font-size: 1.4rem; color: var(--text); margin-top: 40px; margin-bottom: 16px;">11. Privacy-First Promise</h2>
+      <p style="color: var(--text); margin-bottom: 20px;">
+        Desktop Icon Toggle was built with the philosophy that your privacy is your right, not a feature to be negotiated. We will never add tracking, telemetry, or data collection features to this application. This commitment is reflected in our open-source code and enforced by the community.
+      </p>
+    </div>
+
+    <div style="margin-top: 60px; padding-top: 40px; border-top: 1px solid var(--border);">
+      <p style="color: var(--muted); font-size: 14px; text-align: center;">
+        © 2024 Desktop Icon Toggle · All rights reserved · <a href="https://github.com/Harsimrat-creation/desktop-icon-toggle" target="_blank" style="color: var(--accent); text-decoration: none;">Open Source (MIT License)</a>
+      </p>
+    </div>
+  </div>
+</div><!-- /page-privacy -->
+
+<footer>
+  Desktop Icon Toggle · Open source · <a href="https://github.com/Harsimrat-creation/desktop-icon-toggle/releases/latest/download/DesktopIconToggle.exe" target="_blank">View on GitHub</a> · MIT License
+</footer>
+
+<script>
+  function showPage(name) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + name).classList.add('active');
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    const btn = document.getElementById('nav-' + name);
+    if (btn) btn.classList.add('active');
+  }
+
+  function showFile(name) {
+    document.querySelectorAll('.file-content').forEach(f => f.classList.remove('active'));
+    document.querySelectorAll('.file-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('file-' + name).classList.add('active');
+    document.getElementById('tab-' + name).classList.add('active');
+  }
+
+  function copyCode(id) {
+    const el = document.getElementById(id);
+    const text = el.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = el.closest('.code-viewer').querySelector('.copy-btn');
+      const orig = btn.textContent;
+      btn.textContent = 'Copied!';
+      btn.style.color = '#22c55e';
+      setTimeout(() => { btn.textContent = orig; btn.style.color = ''; }, 1800);
+    });
+  }
+
+  let iconsOn = true;
+  function demoToggle() {
+    iconsOn = !iconsOn;
+    const circle = document.getElementById('tray-demo');
+    const status = document.getElementById('tray-status');
+    if (iconsOn) {
+      circle.textContent = '🟢';
+      circle.className = 'tray-icon-circle on';
+      status.textContent = 'Icons visible';
+    } else {
+      circle.textContent = '⚫';
+      circle.className = 'tray-icon-circle off';
+      status.textContent = 'Icons hidden';
+    }
+  }
+</script>
+</body>
+</html>
